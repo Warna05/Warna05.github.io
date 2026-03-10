@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Per Micia ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose:    #e8647a;
+    --rose-l:  #f4a0b0;
+    --cream:   #fdf6ef;
+    --warm:    #f7ede2;
+    --gold:    #c9a96e;
+    --dark:    #1a0a10;
+    --ink:     #3d1a24;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--dark);
+    font-family: 'Cormorant Garamond', serif;
+    cursor: none;
+  }
+
+  /* ── Cursore personalizzato ── */
+  .cursor {
+    position: fixed;
+    width: 12px; height: 12px;
+    background: var(--rose-l);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform .1s ease, width .3s ease, height .3s ease, opacity .3s;
+    mix-blend-mode: screen;
+  }
+
+  /* ── Sfondo sfumato ── */
+  .bg {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 80%, rgba(232,100,122,.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,169,110,.12) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(61,26,36,.9) 0%, #1a0a10 100%);
+  }
+
+  /* ── Particelle cuori ── */
+  canvas {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Wrapper centrale ── */
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  /* ── Cuore SVG principale ── */
+  .heart-wrap {
+    position: relative;
+    width: 220px; height: 200px;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: heartAppear 1.2s cubic-bezier(.34,1.56,.64,1) 0.5s forwards;
+  }
+  @keyframes heartAppear {
+    from { opacity: 0; transform: scale(0) rotate(-15deg); }
+    to   { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+
+  .heart-svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 30px rgba(232,100,122,.7))
+            drop-shadow(0 0 60px rgba(232,100,122,.3));
+    animation: heartbeat 1.4s ease-in-out 1.7s infinite;
+  }
+  @keyframes heartbeat {
+    0%,100% { transform: scale(1); }
+    14%     { transform: scale(1.1); }
+    28%     { transform: scale(1); }
+    42%     { transform: scale(1.08); }
+    70%     { transform: scale(1); }
+  }
+
+  .heart-path {
+    fill: url(#heartGrad);
+    stroke: rgba(244,160,176,.4);
+    stroke-width: 1;
+  }
+
+  /* Emoji centro cuore */
+  .heart-emoji {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem;
+    padding-top: 1rem;
+    animation: emojiFloat 3s ease-in-out 2s infinite;
+  }
+  @keyframes emojiFloat {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50%     { transform: translateY(-8px) rotate(5deg); }
+  }
+
+  /* ── Testo ── */
+  .label-for {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: var(--rose-l);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp .9s ease 1.4s forwards;
+    margin-bottom: .5rem;
+  }
+
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(4rem, 12vw, 7rem);
+    color: var(--cream);
+    line-height: 1;
+    letter-spacing: -2px;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.7s forwards;
+    text-shadow:
+      0 0 40px rgba(232,100,122,.5),
+      0 0 80px rgba(232,100,122,.2);
+    position: relative;
+  }
+  .name::after {
+    content: 'Micia';
+    position: absolute; inset: 0;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232,100,122,.3);
+    transform: translate(3px, 3px);
+    z-index: -1;
+  }
+
+  .tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(.9rem, 2.5vw, 1.15rem);
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-top: 1.2rem;
+    opacity: 0;
+    animation: fadeUp .9s ease 2.1s forwards;
+  }
+
+  /* Linea decorativa */
+  .line-deco {
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rose), transparent);
+    margin: 1.5rem auto;
+    animation: lineGrow 1s ease 2.5s forwards;
+  }
+  @keyframes lineGrow { to { width: 200px; } }
+
+  .message {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(.85rem, 2vw, 1rem);
+    color: rgba(253,246,239,.5);
+    letter-spacing: 3px;
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp .8s ease 3s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Petali decorativi angoli ── */
+  .petal {
+    position: fixed;
+    font-size: 1.4rem;
+    opacity: 0;
+    animation: petalFloat linear infinite;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* ── Cuoricini intorno al nome ── */
+  .mini-heart {
+    position: fixed;
+    font-size: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    animation: miniFloat ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="bg"></div>
+<canvas id="canvas"></canvas>
+
+<div class="stage">
+  <!-- Cuore principale -->
+  <div class="heart-wrap">
+    <svg class="heart-svg" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="heartGrad" cx="50%" cy="35%" r="65%">
+          <stop offset="0%"   stop-color="#f4a0b0"/>
+          <stop offset="40%"  stop-color="#e8647a"/>
+          <stop offset="100%" stop-color="#9e2a40"/>
+        </radialGradient>
+        <radialGradient id="heartGlow" cx="35%" cy="30%" r="40%">
+          <stop offset="0%"  stop-color="rgba(255,255,255,.35)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <path class="heart-path" d="M50 85 C50 85 8 55 8 28 C8 14 19 5 31 5 C38 5 45 9 50 15 C55 9 62 5 69 5 C81 5 92 14 92 28 C92 55 50 85 50 85Z"/>
+      <!-- Riflesso luce -->
+      <path d="M28 15 C28 15 22 22 22 32" stroke="rgba(255,255,255,.4)" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </svg>
+    <div class="heart-emoji">🐱</div>
+  </div>
+
+  <!-- Testi -->
+  <div class="label-for">per la mia</div>
+  <div class="name">Micia</div>
+  <div class="tagline">♡ &nbsp; con tutto il mio amore &nbsp; ♡</div>
+  <div class="line-deco"></div>
+  <div class="message">ogni giorno con te è il più bello</div>
+</div>
+
+<script>
+// ── Cursore personalizzato
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top  = e.clientY + 'px';
+});
+
+// ── Canvas: pioggia di cuoricini e stelle
+const canvas = document.getElementById('canvas');
+const ctx    = canvas.getContext('2d');
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const particles = [];
+
+function randomRange(a, b) { return a + Math.random() * (b - a); }
+
+// Crea particelle cuore
+function spawnParticle() {
+  particles.push({
+    x:    randomRange(0, canvas.width),
+    y:    canvas.height + 20,
+    size: randomRange(8, 22),
+    speed: randomRange(.4, 1.2),
+    drift: randomRange(-.4, .4),
+    opacity: randomRange(.3, .8),
+    rotation: randomRange(-30, 30),
+    rotSpeed: randomRange(-.5, .5),
+    type: Math.random() > .3 ? 'heart' : 'star',
+    color: Math.random() > .5 ? '#e8647a' : (Math.random() > .5 ? '#f4a0b0' : '#c9a96e')
+  });
+}
+
+function drawHeart(ctx, x, y, size) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  ctx.moveTo(0, -size * .25);
+  ctx.bezierCurveTo(-size * .5, -size * .7,  -size, -size * .2, 0, size * .4);
+  ctx.bezierCurveTo( size, -size * .2,  size * .5, -size * .7, 0, -size * .25);
+  ctx.closePath();
+  ctx.restore();
+}
+
+function drawStar(ctx, x, y, size) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a = (i * 4 * Math.PI / 5) - Math.PI / 2;
+    const ax = Math.cos(a) * size;
+    const ay = Math.sin(a) * size;
+    i === 0 ? ctx.moveTo(ax, ay) : ctx.lineTo(ax, ay);
+  }
+  ctx.closePath();
+  ctx.restore();
+}
+
+let frame = 0;
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Spawn
+  if (frame % 18 === 0) spawnParticle();
+  frame++;
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.y -= p.speed;
+    p.x += p.drift;
+    p.rotation += p.rotSpeed;
+
+    // Fade out in cima
+    const fadeZone = canvas.height * .15;
+    const alpha = p.y < fadeZone ? (p.opacity * p.y / fadeZone) : p.opacity;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation * Math.PI / 180);
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 8;
+
+    ctx.beginPath();
+    if (p.type === 'heart') drawHeart(ctx, 0, 0, p.size);
+    else                    drawStar(ctx, 0, 0, p.size * .5);
+    ctx.fill();
+    ctx.restore();
+
+    if (p.y < -40) particles.splice(i, 1);
+  }
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ── Click: esplosione cuori
+document.addEventListener('click', e => {
+  for (let i = 0; i < 12; i++) {
+    particles.push({
+      x:     e.clientX + randomRange(-30, 30),
+      y:     e.clientY + randomRange(-10, 10),
+      size:  randomRange(6, 16),
+      speed: randomRange(1, 3.5),
+      drift: randomRange(-1.5, 1.5),
+      opacity: randomRange(.6, 1),
+      rotation: randomRange(-45, 45),
+      rotSpeed: randomRange(-2, 2),
+      type:  'heart',
+      color: ['#e8647a','#f4a0b0','#c9a96e','#fdf6ef'][Math.floor(Math.random()*4)]
+    });
+  }
+});
+</script>
+</body>
+</html>
